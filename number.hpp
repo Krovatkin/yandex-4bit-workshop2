@@ -167,21 +167,30 @@ auto operator+(Number<S1, B1> n1, Number<S2, B2> n2) {
 template <size_t S1, size_t S2, bool B1, bool B2,  std::enable_if_t<B1 == B2 && S1 != S2, bool> = true>
 auto operator+(Number<S1, B1> n1, Number<S2, B2> n2) {
     //std::cout << "running case 2) B1 == B2 && S1 != S2\n";
-    Number<std::max(S1, S2), B1> n1_ext(static_cast<int32_t>(n1));
-    Number<std::max(S1, S2), B1> n2_ext(static_cast<int32_t>(n2));
+
+    // widen to the bigger rank
+    Number<std::max(S1, S2), B1> n1_ext(n1);
+    Number<std::max(S1, S2), B1> n2_ext(n2);
+    // ranks and sign are equal now
     return n1_ext.add(n2_ext);
 }
 
 template <size_t S1, size_t S2, bool B1, bool B2,  std::enable_if_t<B1 != B2 && ((!B1 && S1 >= S2) || (!B2 && S2 >= S1)), bool> = true>
 auto operator+(Number<S1, B1> n1, Number<S2, B2> n2) {
     //std::cout << "running case 3) (!B1 && S1 >= S2) || (!B2 && S2 >= S1)\n";
-    Number<S1, false> n2_ext(static_cast<int32_t>(n2));
-    return n1.add(n2_ext);
+    
+    // widen to the bigger rank
+    Number<std::max(S1, S2), false> n1_ext(n1);
+    Number<std::max(S1, S2), false> n2_ext(n2);
+    // ranks are equal and numbers are unsigned
+    return n1_ext.add(n2_ext);
 }
 
 template <size_t S1, size_t S2, bool B1, bool B2,  std::enable_if_t<B1 != B2 && ((B1 && S1 > S2) || (B2 && S2 > S1)), bool> = true>
 auto operator+(Number<S1, B1> n1, Number<S2, B2> n2) {
     //std::cout << "running case 4) (!B1 && S1 >= S2) || (!B2 && S2 >= S1)\n";
-    Number<S1, true> n2_ext(static_cast<int32_t>(n2));
-    return n1.add(n2_ext);
+    Number<std::max(S1, S2), true> n1_ext(n1);
+    Number<std::max(S1, S2), true> n2_ext(n2);
+    // ranks are equal and numbers are signed
+    return n1_ext.add(n2_ext);
 }

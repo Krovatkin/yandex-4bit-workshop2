@@ -1,2 +1,10 @@
-# yandex-4bit-workshop2
-This is supplemental material for yandex-4bit-workshop2
+### Build Instructions:
+
+```
+git clone https://github.com/google/googletest
+mkdir build
+cd build
+cmake ..
+cmake --build .
+```
+
